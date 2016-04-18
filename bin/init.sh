@@ -21,6 +21,7 @@ CHECK_VAR MAILMAN_DEFAULT_SERVER_LANGUAGE
 CHECK_VAR MAILMAN_SPAMASSASSIN_HOLD_SCORE
 CHECK_VAR MAILMAN_SPAMASSASSIN_DISCARD_SCORE
 CHECK_VAR MAILMAN_LISTMASTER
+CHECK_VAR MAILMAN_SITEPASS
 
 MSG "Configuring system mailname..."
 
@@ -34,7 +35,7 @@ postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	mynetworks="$POSTFIX_MYNETWORKS" \
 	virtual_alias_domains="$POSTFIX_VIRTUAL_ALIAS_DOMAINS" \
 	virtual_mailbox_domains="$POSTFIX_VIRTUAL_MAILBOX_DOMAINS" \
-	virtual_relay_domains="$POSTFIX_RELAY_DOMAINS"
+	relay_domains="$POSTFIX_RELAY_DOMAINS"
 
 MSG "Configuring Postfix LDAP settings..."
 
@@ -54,5 +55,15 @@ sed -e "s/^DEFAULT_EMAIL_HOST\ =\ .*/DEFAULT_EMAIL_HOST\ =\ \'${MAILMAN_DOMAIN}\
 	-e "s/^POSTFIX_STYLE_VIRTUAL_DOMAINS\ =\ .*/POSTFIX_STYLE_VIRTUAL_DOMAINS\ =\ \[\'${MAILMAN_DOMAIN}\'\]/" \
 	-e "s/^DEB_LISTMASTER\ =\ .*/DEB_LISTMASTER\ =\ \'${MAILMAN_LISTMASTER}\'/" \
 	/etc/mailman/mm_cfg.py
+
+if [[ ! -d /var/lib/mailman/lists/mailman ]]; then
+	MSG "Creating Mailman site list..."
+	/usr/lib/mailman/bin/newlist -q mailman "${MAILMAN_LISTMASTER}" "${MAILMAN_SITEPASS}"
+fi
+
+if [[ ! -d /var/run/mailman/ ]]; then
+	mkdir -p /var/run/mailman
+  chown -R list:list /var/run/mailman
+fi
 
 supervisord -c /etc/supervisor/supervisord.conf 
