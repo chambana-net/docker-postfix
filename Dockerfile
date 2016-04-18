@@ -6,7 +6,7 @@ RUN apt-get -qq update
 
 RUN apt-get install -y --no-install-recommends micro-httpd \
                                                uwsgi \
-                                               uwsgi-plugin-cgi \
+                                               uwsgi-core \
                                                mailman \
                                                postfix \
                                                postfix-ldap \
