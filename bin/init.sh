@@ -39,7 +39,7 @@ postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 
 MSG "Configuring Postfix LDAP settings..."
 
-sed -e "s/^server_host\ =\ .*/server_host\ =\ ${POSTFIX_LDAP_SERVER_HOST}/" \
+sed -i -e "s/^server_host\ =\ .*/server_host\ =\ ${POSTFIX_LDAP_SERVER_HOST}/" \
 	-e "s/^server_base\ =\ .*/server_base\ =\ ${POSTFIX_LDAP_SERVER_BASE}/" \
 	-e "s/^bind_dn\ =\ .*/bind_dn\ =\ ${POSTFIX_LDAP_BIND_DN}/" \
 	-e "s/^bind_pw\ =\ .*/bind_pw\ =\ ${POSTFIX_LDAP_BIND_PW}/" \
