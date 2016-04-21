@@ -24,7 +24,7 @@ ADD files/postfix/ldap/virtual.cf /etc/postfix/ldap/virtual.cf
 
 ADD files/mailman/mm_cfg.py /etc/mailman/mm_cfg.py
 
-ADD files/uwsgi/mailman.conf /etc/uwsgi/mailman.conf
+ADD files/uwsgi/mailman.ini /etc/uwsgi/mailman.ini
 
 ADD files/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
