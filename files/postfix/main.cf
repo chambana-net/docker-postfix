@@ -18,8 +18,8 @@ append_dot_mydomain = no
 readme_directory = no
 
 # TLS parameters
-smtpd_tls_cert_file=/etc/ssl/cert.pem
-smtpd_tls_key_file=/etc/ssl/key.pem
+smtpd_tls_cert_file=/etc/letsencrypt/fullchain.pem
+smtpd_tls_key_file=/etc/letsencrypt/key.pem
 smtpd_tls_security_level = may
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtpd_tls_mandatory_protocols = !SSLv2,!SSLv3,!TLSv1,!TLSv1.1
@@ -59,7 +59,7 @@ message_size_limit = 50000000
 
 #SASL settings
 smtpd_sasl_authenticated_header = yes
-smtpd_sasl_path = inet:dovecot:10143
+smtpd_sasl_path = inet:[dovecot]:10143
 smtpd_sasl_type = dovecot
 
 #Maps
