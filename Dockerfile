@@ -11,6 +11,8 @@ RUN apt-get install -y --no-install-recommends micro-httpd \
                                                postfix \
                                                postfix-ldap \
                                                postfix-policyd-spf-python \
+                                               rsyslog
+                                               ca-certificates
                                                supervisor
 
 ENV MAILMAN_DEFAULT_SERVER_LANGUAGE en
@@ -25,6 +27,8 @@ ADD files/postfix/ldap/virtual.cf /etc/postfix/ldap/virtual.cf
 ADD files/mailman/mm_cfg.py /etc/mailman/mm_cfg.py
 
 ADD files/uwsgi/mailman.ini /etc/uwsgi/mailman.ini
+
+ADD files/rsyslog/rsyslog.conf /etc/rsyslog.conf
 
 ADD files/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
