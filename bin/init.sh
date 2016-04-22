@@ -20,6 +20,8 @@ CHECK_VAR POSTFIX_SASL_HOST
 CHECK_VAR POSTFIX_SASL_PORT
 CHECK_VAR POSTFIX_DELIVERY_HOST
 CHECK_VAR POSTFIX_DELIVERY_PORT
+CHECK_VAR POSTFIX_SPAM_HOST
+CHECK_VAR POSTFIX_SPAM_PORT
 CHECK_VAR MAILMAN_DOMAIN
 CHECK_VAR MAILMAN_DEFAULT_SERVER_LANGUAGE
 CHECK_VAR MAILMAN_SPAMASSASSIN_HOLD_SCORE
@@ -33,8 +35,9 @@ echo "$POSTFIX_MAILNAME" > /etc/mailname
 
 MSG "Configuring Postfix main.cf..."
 
-SASL_URI="lmtp:[$(getent hosts $POSTFIX_SASL_HOST  | awk '{ print $1 }')]:$POSTFIX_SASL_PORT"
-DELIVERY_URI="lmtp:[$(getent hosts $POSTFIX_DELIVERY_HOST  | awk '{ print $1 }')]:$POSTFIX_DELIVERY_PORT"
+SASL_URI="lmtp:[$(getent hosts $POSTFIX_SASL_HOST | head -n1 | awk '{ print $1 }')]:$POSTFIX_SASL_PORT"
+DELIVERY_URI="lmtp:[$(getent hosts $POSTFIX_DELIVERY_HOST | head -n1 | awk '{ print $1 }')]:$POSTFIX_DELIVERY_PORT"
+SPAM_URI="amavis:[$(getent hosts $POSTFIX_SPAM_HOST | head -n1 | awk '{ print $1 }')]:$POSTFIX_SPAM_PORT"
 
 postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	myhostname="$POSTFIX_MYHOSTNAME" \
@@ -43,8 +46,10 @@ postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	virtual_alias_domains="$POSTFIX_VIRTUAL_ALIAS_DOMAINS" \
 	virtual_mailbox_domains="$POSTFIX_VIRTUAL_MAILBOX_DOMAINS" \
 	relay_domains="$POSTFIX_RELAY_DOMAINS" \
-  smtpd_sasl_path="$SASL_URI" \
-  virtual_transport="$DELIVERY_URI"
+	smtpd_sasl_path="$SASL_URI" \
+	virtual_transport="$DELIVERY_URI"
+
+postconf -Pe smtpd/pass/content_filter="$SPAM_URI"
 
 MSG "Configuring Postfix LDAP settings..."
 
@@ -80,5 +85,7 @@ postmap /etc/postfix/transports
 
 touch /etc/postfix/virtual-alias.cf
 postmap /etc/postfix/virtual-alias.cf
+
+MSG "Starting Postfix..."
 
 supervisord -c /etc/supervisor/supervisord.conf 
