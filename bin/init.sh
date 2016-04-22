@@ -40,7 +40,7 @@ postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 MSG "Configuring Postfix LDAP settings..."
 
 sed -i -e "s/^server_host\ =\ .*/server_host\ =\ ${POSTFIX_LDAP_SERVER_HOST}/" \
-	-e "s/^server_base\ =\ .*/server_base\ =\ ${POSTFIX_LDAP_SERVER_BASE}/" \
+	-e "s/^search_base\ =\ .*/search_base\ =\ ${POSTFIX_LDAP_SEARCH_BASE}/" \
 	-e "s/^bind_dn\ =\ .*/bind_dn\ =\ ${POSTFIX_LDAP_BIND_DN}/" \
 	-e "s/^bind_pw\ =\ .*/bind_pw\ =\ ${POSTFIX_LDAP_BIND_PW}/" \
 	/etc/postfix/ldap/virtual.cf
@@ -65,5 +65,11 @@ if [[ ! -d /var/run/mailman/ ]]; then
 	mkdir -p /var/run/mailman
   chown -R list:list /var/run/mailman
 fi
+
+touch /etc/postfix/transports
+postmap /etc/postfix/transports
+
+touch /etc/postfix/virtual-alias.cf
+postmap /etc/postfix/virtual-alias.cf
 
 supervisord -c /etc/supervisor/supervisord.conf 
