@@ -2,9 +2,8 @@ FROM chambana/base:latest
 
 MAINTAINER Josh King <jking@chambana.net>
 
-RUN apt-get -qq update
-
-RUN apt-get install -y --no-install-recommends micro-httpd \
+RUN apt-get -qq update && \
+    apt-get install -y --no-install-recommends micro-httpd \
                                                uwsgi \
                                                uwsgi-core \
                                                mailman \
@@ -13,8 +12,13 @@ RUN apt-get install -y --no-install-recommends micro-httpd \
                                                postfix-policyd-spf-python \
                                                rsyslog \
                                                ca-certificates \
-                                               supervisor
+                                               supervisor && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
+ENV POSTFIX_SASL_HOST dovecot
+ENV POSTFIX_SASL_PORT 10143
+ENV POSTFIX_DELIVERY_HOST dovecot
+ENV POSTFIX_DELIVERY_PORT 24
 ENV MAILMAN_DEFAULT_SERVER_LANGUAGE en
 ENV MAILMAN_SPAMASSASSIN_DISCARD_SCORE 8
 ENV MAILMAN_SPAMASSASSIN_HOLD_SCORE 5

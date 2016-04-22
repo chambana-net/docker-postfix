@@ -59,7 +59,7 @@ message_size_limit = 50000000
 
 #SASL settings
 smtpd_sasl_authenticated_header = yes
-smtpd_sasl_path = inet:[dovecot]:10143
+smtpd_sasl_path = inet:dovecot.local:10143
 smtpd_sasl_type = dovecot
 
 #Maps
@@ -74,7 +74,7 @@ relay_recipient_maps = hash:/var/lib/mailman/data/virtual-mailman
 relay_domains = {{ POSTFIX_RELAY_DOMAINS }}
 
 #Transports
-virtual_transport = lmtp:[dovecot]:24
+virtual_transport = lmtp:dovecot.local:24
 transport_maps = hash:/etc/postfix/transports
 
 #Postscreen
