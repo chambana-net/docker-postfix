@@ -31,6 +31,7 @@ smtpd_tls_eecdh_grade = ultra
 smtpd_tls_loglevel = 1
 smtpd_tls_received_header = yes
 
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
 smtp_tls_security_level = may
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtp_tls_mandatory_protocols = !SSLv2,!SSLv3,!TLSv1,!TLSv1.1
@@ -44,12 +45,12 @@ tls_ssl_options = NO_COMPRESSION
 # See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
 # information on enabling SSL in the smtp client.
 
-proxy_interfaces = {{ POSTFIX_PROXY_INTERFACES }}
-myhostname = {{ POSTFIX_MYHOSTNAME }}
+proxy_interfaces = 
+myhostname = 
 myorigin = /etc/mailname
-mydestination = {{ POSTFIX_MYDESTINATION }}
+mydestination = 
 relayhost = 
-mynetworks = {{ POSTFIX_MYNETWORKS }}
+mynetworks = 
 mailbox_command = procmail -a "$EXTENSION"
 mailbox_size_limit = 0
 recipient_delimiter = +
@@ -59,22 +60,22 @@ message_size_limit = 50000000
 
 #SASL settings
 smtpd_sasl_authenticated_header = yes
-smtpd_sasl_path = inet:dovecot.local:10143
+smtpd_sasl_path = 
 smtpd_sasl_type = dovecot
 
 #Maps
 alias_database = hash:/etc/aliases
 alias_maps = hash:/etc/aliases
 smtpd_sender_login_maps = ldap:/etc/postfix/ldap/virtual.cf
-virtual_alias_domains = {{ POSTFIX_VIRTUAL_ALIAS_DOMAINS }}
+virtual_alias_domains = 
 virtual_alias_maps = hash:/etc/postfix/virtual-alias.cf
-virtual_mailbox_domains = {{ POSTFIX_VIRTUAL_MAILBOX_DOMAINS }}
+virtual_mailbox_domains = 
 virtual_mailbox_maps = ldap:/etc/postfix/ldap/virtual.cf
 relay_recipient_maps = hash:/var/lib/mailman/data/virtual-mailman
-relay_domains = {{ POSTFIX_RELAY_DOMAINS }}
+relay_domains = 
 
 #Transports
-virtual_transport = lmtp:dovecot.local:24
+virtual_transport = 
 transport_maps = hash:/etc/postfix/transports
 
 #Postscreen

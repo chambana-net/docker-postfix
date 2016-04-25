@@ -15,6 +15,7 @@ RUN apt-get -qq update && \
                                                supervisor && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
+ENV POSTFIX_MYNETwORKS 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 ENV POSTFIX_SASL_HOST dovecot
 ENV POSTFIX_SASL_PORT 10143
 ENV POSTFIX_DELIVERY_HOST dovecot
