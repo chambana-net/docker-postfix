@@ -11,11 +11,11 @@
 # ==========================================================================
 #smtp      inet  n       -       -       -       -       smtpd
 smtp      inet  n       -       -       -       1       postscreen
-smtpd     pass  -       -       -       -       -       smtpd
+smtpd     pass  -       -       n       -       -       smtpd
   -o content_filter=amavis:[amavis]:10024
 dnsblog   unix  -       -       -       -       0       dnsblog
 tlsproxy  unix  -       -       -       -       0       tlsproxy
-submission inet n       -       -       -       -       smtpd
+submission inet n       -       n       -       -       smtpd
   -o syslog_name=postfix/submission
   -o smtpd_tls_security_level=encrypt
   -o tls_preempt_cipherlist=yes
