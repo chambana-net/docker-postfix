@@ -88,9 +88,9 @@ postmap /etc/postfix/virtual-alias.cf
 
 MSG "Populating Postfix chroot..."
 cp -a /etc/localtime /etc/hosts /etc/services /etc/resolv.conf /etc/nsswitch.conf /etc/host.conf /etc/passwd /var/spool/postfix/etc/
-cp -a /usr/lib/x86_64-linux-gnu/libnss_*.so* /var/spool/postfix/lib/
-cp -a /usr/lib/x86_64-linux-gnu/libresolv.so* /var/spool/postfix/lib/
-cp -a /usr/lib/x86_64-linux-gnu/libdb-*.so* /var/spool/postfix/lib/
+#cp -a /usr/lib/x86_64-linux-gnu/libnss_*.so* /var/spool/postfix/lib/
+#cp -a /usr/lib/x86_64-linux-gnu/libresolv.so* /var/spool/postfix/lib/
+#cp -a /usr/lib/x86_64-linux-gnu/libdb-*.so* /var/spool/postfix/lib/
 
 MSG "Updating CA certificates..."
 if [[ "$(ls -A /usr/local/share/ca-certificates)" ]]; then
