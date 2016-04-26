@@ -139,7 +139,6 @@ smtpd_sender_restrictions=
         permit_mynetworks,
         reject_unlisted_sender,
         reject_unknown_sender_domain,
-        reject_authenticated_sender_login_mismatch,
         permit
 
 #MUA Pseudo-parameter restrictions
@@ -150,6 +149,8 @@ mua_client_restrictions=
 mua_helo_restrictions=
 
 mua_sender_restrictions=
+        reject_authenticated_sender_login_mismatch,
+        permit
 
 mua_recipient_restrictions=
         reject_non_fqdn_recipient, 
