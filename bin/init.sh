@@ -70,6 +70,9 @@ sed -i -e "s/^DEFAULT_EMAIL_HOST\ *=.*/DEFAULT_EMAIL_HOST\ =\ \'${MAILMAN_DOMAIN
 	-e "s/^DEB_LISTMASTER\ *=.*/DEB_LISTMASTER\ =\ \'${MAILMAN_LISTMASTER}\'/" \
 	/etc/mailman/mm_cfg.py
 
+MSG "Setting Mailman sitepass..."
+/usr/sbin/mmsitepass "${MAILMAN_SITEPASS}"
+
 if [[ ! -d /var/lib/mailman/lists/mailman ]]; then
 	MSG "Creating Mailman site list..."
 	/usr/lib/mailman/bin/newlist -q mailman "${MAILMAN_LISTMASTER}" "${MAILMAN_SITEPASS}"
