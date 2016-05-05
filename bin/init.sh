@@ -35,8 +35,8 @@ echo "$POSTFIX_MAILNAME" > /etc/mailname
 
 MSG "Configuring Postfix main.cf..."
 
-SASL_URI="inet:[$(getent hosts $POSTFIX_SASL_HOST | head -n1 | awk '{ print $1 }')]:$POSTFIX_SASL_PORT"
-DELIVERY_URI="lmtp:[$(getent hosts $POSTFIX_DELIVERY_HOST | head -n1 | awk '{ print $1 }')]:$POSTFIX_DELIVERY_PORT"
+SASL_URI="inet:$POSTFIX_SASL_HOST:$POSTFIX_SASL_PORT"
+DELIVERY_URI="lmtp:$POSTFIX_DELIVERY_HOST:$POSTFIX_DELIVERY_PORT"
 SPAM_URI="amavis:[$POSTFIX_SPAM_HOST]:$POSTFIX_SPAM_PORT"
 
 postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
