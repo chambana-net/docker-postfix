@@ -26,6 +26,8 @@ ENV MAILMAN_DEFAULT_SERVER_LANGUAGE en
 ENV MAILMAN_SPAMASSASSIN_DISCARD_SCORE 8
 ENV MAILMAN_SPAMASSASSIN_HOLD_SCORE 5
 
+VOLUME ["/var/lib/mailman"]
+
 RUN mkdir -p /etc/postfix/ldap
 ADD files/postfix/main.cf /etc/postfix/main.cf
 ADD files/postfix/master.cf /etc/postfix/master.cf
