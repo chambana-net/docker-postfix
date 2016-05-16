@@ -90,8 +90,9 @@ fi
 
 if [[ ! -e /etc/postfix/virtual-alias.cf ]]; then
 	touch /etc/postfix/virtual-alias.cf
-	postmap /etc/postfix/virtual-alias.cf
 fi
+
+postmap /etc/postfix/virtual-alias.cf
 
 MSG "Populating Postfix chroot..."
 cp -a /etc/localtime /etc/hosts /etc/services /etc/resolv.conf /etc/nsswitch.conf /etc/host.conf /etc/passwd /var/spool/postfix/etc/
