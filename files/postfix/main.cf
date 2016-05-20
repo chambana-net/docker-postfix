@@ -59,6 +59,9 @@ smtpd_helo_required = yes
 message_size_limit = 50000000
 lmtp_host_lookup = native
 
+#Mailman
+mailman_destination_recipient_limit = 1
+
 #SASL settings
 smtpd_sasl_authenticated_header = yes
 smtpd_sasl_path = 
