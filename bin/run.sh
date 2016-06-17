@@ -37,7 +37,7 @@ MSG "Configuring Postfix main.cf..."
 
 SASL_URI="inet:$POSTFIX_SASL_HOST:$POSTFIX_SASL_PORT"
 DELIVERY_URI="lmtp:$POSTFIX_DELIVERY_HOST:$POSTFIX_DELIVERY_PORT"
-SPAM_URI="amavis:[$POSTFIX_SPAM_HOST]:$POSTFIX_SPAM_PORT"
+SPAM_URI="scan:[$POSTFIX_SPAM_HOST]:$POSTFIX_SPAM_PORT"
 
 postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	myhostname="$POSTFIX_MYHOSTNAME" \
@@ -107,4 +107,4 @@ fi
 
 MSG "Starting Postfix..."
 
-supervisord -c /etc/supervisor/supervisord.conf 
+exec "$@"

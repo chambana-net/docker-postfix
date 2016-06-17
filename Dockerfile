@@ -20,8 +20,8 @@ ENV POSTFIX_SASL_HOST dovecot
 ENV POSTFIX_SASL_PORT 10143
 ENV POSTFIX_DELIVERY_HOST dovecot
 ENV POSTFIX_DELIVERY_PORT 24
-ENV POSTFIX_SPAM_HOST amavis
-ENV POSTFIX_SPAM_PORT 10024
+ENV POSTFIX_SPAM_HOST spam
+ENV POSTFIX_SPAM_PORT 10025
 ENV MAILMAN_DEFAULT_SERVER_LANGUAGE en
 ENV MAILMAN_SPAMASSASSIN_DISCARD_SCORE 8
 ENV MAILMAN_SPAMASSASSIN_HOLD_SCORE 5
@@ -44,7 +44,8 @@ ADD files/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 EXPOSE 25 80 587
 
 ## Add startup script.
-ADD bin/init.sh /app/bin/init.sh
-RUN chmod 0755 /app/bin/init.sh
+ADD bin/run.sh /app/bin/run.sh
+RUN chmod 0755 /app/bin/run.sh
 
-CMD ["/app/bin/init.sh"]
+ENTRYPOINT ["/app/bin/run.sh"]
+CMD ["supervisord", "-c", "/etc/supervisor/supervisord.conf"] 
