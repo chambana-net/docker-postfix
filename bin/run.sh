@@ -80,18 +80,23 @@ fi
 
 if [[ ! -d /var/run/mailman/ ]]; then
 	mkdir -p /var/run/mailman
-  chown -R list:list /var/run/mailman
+	chown -R list:list /var/run/mailman
 fi
 
 if [[ ! -e /etc/postfix/transports ]]; then
 	echo "${MAILMAN_DOMAIN} mailman:" > /etc/postfix/transports
-	postmap /etc/postfix/transports
+fi
+
+if [[ ! -e /etc/postfix/virtual-sender.cf ]]; then
+	touch /etc/postfix/virtual-sender.cf
 fi
 
 if [[ ! -e /etc/postfix/virtual-alias.cf ]]; then
 	touch /etc/postfix/virtual-alias.cf
 fi
 
+postmap /etc/postfix/transports
+postmap /etc/postfix/virtual-sender.cf
 postmap /etc/postfix/virtual-alias.cf
 
 MSG "Populating Postfix chroot..."

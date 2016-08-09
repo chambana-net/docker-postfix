@@ -70,7 +70,7 @@ smtpd_sasl_type = dovecot
 #Maps
 alias_database = hash:/etc/aliases
 alias_maps = hash:/etc/aliases
-smtpd_sender_login_maps = ldap:/etc/postfix/ldap/virtual.cf
+smtpd_sender_login_maps = ldap:/etc/postfix/ldap/virtual.cf, hash:/etc/postfix/virtual-sender.cf
 virtual_alias_domains = 
 virtual_alias_maps = hash:/etc/postfix/virtual-alias.cf
 virtual_mailbox_domains = 
