@@ -10,6 +10,8 @@ RUN apt-get -qq update && \
                                                postfix \
                                                postfix-ldap \
                                                postfix-policyd-spf-python \
+                                               opendkim \
+                                               opendkim-tools \
                                                rsyslog \
                                                ca-certificates \
                                                supervisor && \
