@@ -89,7 +89,8 @@ postscreen_blacklist_action = drop
 postscreen_dnsbl_action = enforce
 postscreen_dnsbl_sites =
         zen.spamhaus.org*3,	
-        #bl.spamcop.net*2,
+        black.uribl.com*2,
+        bl.spamcop.net,
         psbl.surriel.com,
         bl.spameatingmonkey.net,
         db.wpbl.info,
