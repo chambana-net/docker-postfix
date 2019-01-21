@@ -22,12 +22,6 @@ CHECK_VAR POSTFIX_DELIVERY_HOST
 CHECK_VAR POSTFIX_DELIVERY_PORT
 CHECK_VAR POSTFIX_SPAM_HOST
 CHECK_VAR POSTFIX_SPAM_PORT
-CHECK_VAR MAILMAN_DOMAIN
-CHECK_VAR MAILMAN_DEFAULT_SERVER_LANGUAGE
-CHECK_VAR MAILMAN_SPAMASSASSIN_HOLD_SCORE
-CHECK_VAR MAILMAN_SPAMASSASSIN_DISCARD_SCORE
-CHECK_VAR MAILMAN_LISTMASTER
-CHECK_VAR MAILMAN_SITEPASS
 
 MSG "Configuring system mailname..."
 
@@ -38,6 +32,10 @@ MSG "Configuring Postfix main.cf..."
 SASL_URI="inet:$POSTFIX_SASL_HOST:$POSTFIX_SASL_PORT"
 DELIVERY_URI="lmtp:$POSTFIX_DELIVERY_HOST:$POSTFIX_DELIVERY_PORT"
 SPAM_URI="scan:[$POSTFIX_SPAM_HOST]:$POSTFIX_SPAM_PORT"
+: ${POSTFIX_RELAY_RECIPIENT_MAPS:=""}
+if [[ "$MAILMAN_ENABLE" == "true" ]]; then
+	POSTFIX_RELAY_RECIPIENT_MAPS="$POSTFIX_RELAY_RECIPIENT_MAPS hash:/var/lib/mailman/data/virtual-mailman"
+fi
 
 postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	myhostname="$POSTFIX_MYHOSTNAME" \
@@ -46,6 +44,7 @@ postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	virtual_alias_domains="$POSTFIX_VIRTUAL_ALIAS_DOMAINS" \
 	virtual_mailbox_domains="$POSTFIX_VIRTUAL_MAILBOX_DOMAINS" \
 	relay_domains="$POSTFIX_RELAY_DOMAINS" \
+	relay_recipient_maps="$POSTFIX_RELAY_RECIPIENT_MAPS" \
 	smtpd_sasl_path="$SASL_URI" \
 	virtual_transport="$DELIVERY_URI"
 
@@ -59,32 +58,12 @@ sed -i -e "s/^server_host\ *=.*/server_host\ =\ ${POSTFIX_LDAP_SERVER_HOST}/" \
 	-e "s/^bind_pw\ *=.*/bind_pw\ =\ ${POSTFIX_LDAP_BIND_PW}/" \
 	/etc/postfix/ldap/virtual.cf
 
-MSG "Configuring Mailman..."
-
-sed -i -e "s/^DEFAULT_EMAIL_HOST\ *=.*/DEFAULT_EMAIL_HOST\ =\ \'${MAILMAN_DOMAIN}\'/" \
-	-e "s/^DEFAULT_URL_HOST\ *=.*/DEFAULT_URL_HOST\ =\ \'${MAILMAN_DOMAIN}\'/" \
-	-e "s/^DEFAULT_SERVER_LANGUAGE\ *=.*/DEFAULT_SERVER_LANGUAGE\ =\ \'${MAILMAN_DEFAULT_SERVER_LANGUAGE}\'/" \
-	-e "s/^SPAMASSASSIN_DISCARD_SCORE\ *=.*/SPAMASSASSIN_DISCARD_SCORE\ =\ \'${MAILMAN_SPAMASSASSIN_DISCARD_SCORE}\'/" \
-	-e "s/^SPAMASSASSIN_HOLD_SCORE\ *=.*/SPAMASSASSIN_HOLD_SCORE\ =\ \'${MAILMAN_SPAMASSASSIN_HOLD_SCORE}\'/" \
-	-e "s/^POSTFIX_STYLE_VIRTUAL_DOMAINS\ *=.*/POSTFIX_STYLE_VIRTUAL_DOMAINS\ =\ \[\'${MAILMAN_DOMAIN}\'\]/" \
-	-e "s/^DEB_LISTMASTER\ *=.*/DEB_LISTMASTER\ =\ \'${MAILMAN_LISTMASTER}\'/" \
-	/etc/mailman/mm_cfg.py
-
-MSG "Setting Mailman sitepass..."
-/usr/sbin/mmsitepass "${MAILMAN_SITEPASS}"
-
-if [[ ! -d /var/lib/mailman/lists/mailman ]]; then
-	MSG "Creating Mailman site list..."
-	/usr/lib/mailman/bin/newlist -q mailman "${MAILMAN_LISTMASTER}" "${MAILMAN_SITEPASS}"
-fi
-
-if [[ ! -d /var/run/mailman/ ]]; then
-	mkdir -p /var/run/mailman
-	chown -R list:list /var/run/mailman
-fi
-
 if [[ ! -e /etc/postfix/transports ]]; then
-	echo "${MAILMAN_DOMAIN} mailman:" > /etc/postfix/transports
+	if [[ "$MAILMAN_ENABLE" == "true" ]]; then
+		echo "${MAILMAN_DOMAIN} mailman:" > /etc/postfix/transports
+	else
+		touch /etc/postfix/transports
+	fi
 fi
 
 if [[ ! -e /etc/postfix/virtual-sender.cf ]]; then
@@ -104,6 +83,78 @@ cp -a /etc/localtime /etc/hosts /etc/services /etc/resolv.conf /etc/nsswitch.con
 #cp -a /usr/lib/x86_64-linux-gnu/libnss_*.so* /var/spool/postfix/lib/
 #cp -a /usr/lib/x86_64-linux-gnu/libresolv.so* /var/spool/postfix/lib/
 #cp -a /usr/lib/x86_64-linux-gnu/libdb-*.so* /var/spool/postfix/lib/
+
+cat > /etc/supervisor/supervisord.conf << EOF
+[supervisord]
+nodaemon=true
+autostart=true
+autorestart=true
+
+[program:postfix]
+command=/usr/sbin/postfix start
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+[program:rsyslogd]
+command=/usr/sbin/rsyslogd -n
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+EOF
+
+if [[ "$MAILMAN_ENABLE" == "true" ]]; then
+	CHECK_VAR MAILMAN_DOMAIN
+	CHECK_VAR MAILMAN_DEFAULT_SERVER_LANGUAGE
+	CHECK_VAR MAILMAN_SPAMASSASSIN_HOLD_SCORE
+	CHECK_VAR MAILMAN_SPAMASSASSIN_DISCARD_SCORE
+	CHECK_VAR MAILMAN_LISTMASTER
+	CHECK_VAR MAILMAN_SITEPASS
+
+	MSG "Configuring Mailman..."
+
+	sed -i -e "s/^DEFAULT_EMAIL_HOST\ *=.*/DEFAULT_EMAIL_HOST\ =\ \'${MAILMAN_DOMAIN}\'/" \
+		-e "s/^DEFAULT_URL_HOST\ *=.*/DEFAULT_URL_HOST\ =\ \'${MAILMAN_DOMAIN}\'/" \
+		-e "s/^DEFAULT_SERVER_LANGUAGE\ *=.*/DEFAULT_SERVER_LANGUAGE\ =\ \'${MAILMAN_DEFAULT_SERVER_LANGUAGE}\'/" \
+		-e "s/^SPAMASSASSIN_DISCARD_SCORE\ *=.*/SPAMASSASSIN_DISCARD_SCORE\ =\ \'${MAILMAN_SPAMASSASSIN_DISCARD_SCORE}\'/" \
+		-e "s/^SPAMASSASSIN_HOLD_SCORE\ *=.*/SPAMASSASSIN_HOLD_SCORE\ =\ \'${MAILMAN_SPAMASSASSIN_HOLD_SCORE}\'/" \
+		-e "s/^POSTFIX_STYLE_VIRTUAL_DOMAINS\ *=.*/POSTFIX_STYLE_VIRTUAL_DOMAINS\ =\ \[\'${MAILMAN_DOMAIN}\'\]/" \
+		-e "s/^DEB_LISTMASTER\ *=.*/DEB_LISTMASTER\ =\ \'${MAILMAN_LISTMASTER}\'/" \
+		/etc/mailman/mm_cfg.py
+
+	MSG "Setting Mailman sitepass..."
+	/usr/sbin/mmsitepass "${MAILMAN_SITEPASS}"
+
+	if [[ ! -d /var/lib/mailman/lists/mailman ]]; then
+		MSG "Creating Mailman site list..."
+		/usr/lib/mailman/bin/newlist -q mailman "${MAILMAN_LISTMASTER}" "${MAILMAN_SITEPASS}"
+	fi
+
+	if [[ ! -d /var/run/mailman/ ]]; then
+		mkdir -p /var/run/mailman
+		chown -R list:list /var/run/mailman
+	fi
+
+cat >> /etc/supervisor/supervisord.conf << EOF
+[program:mailman]
+command=/usr/lib/mailman/bin/mailmanctl -s start
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+[program:uwsgi]
+command=/usr/bin/uwsgi --ini /etc/uwsgi/mailman.ini
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+EOF
+
+fi
+
 
 MSG "Updating CA certificates..."
 if [[ "$(ls -A /usr/local/share/ca-certificates)" ]]; then

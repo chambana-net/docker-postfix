@@ -75,7 +75,7 @@ virtual_alias_domains =
 virtual_alias_maps = hash:/etc/postfix/virtual-alias.cf
 virtual_mailbox_domains = 
 virtual_mailbox_maps = ldap:/etc/postfix/ldap/virtual.cf
-relay_recipient_maps = hash:/var/lib/mailman/data/virtual-mailman
+relay_recipient_maps =
 relay_domains = 
 
 #Transports
