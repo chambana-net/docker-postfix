@@ -55,6 +55,7 @@ mailbox_command = procmail -a "$EXTENSION"
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
+inet_protocols = ipv4
 smtpd_helo_required = yes
 message_size_limit = 50000000
 lmtp_host_lookup = native
