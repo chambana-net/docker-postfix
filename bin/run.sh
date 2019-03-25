@@ -124,6 +124,7 @@ autorestart=true
 
 [program:postfix]
 command=/usr/sbin/postfix start
+process_name=master
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
@@ -160,6 +161,7 @@ autorestart=true
 
 [program:postfix]
 command=/usr/sbin/postfix start
+process_name=master
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
