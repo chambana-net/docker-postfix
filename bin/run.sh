@@ -34,6 +34,7 @@ SASL_URI="inet:$POSTFIX_SASL_HOST:$POSTFIX_SASL_PORT"
 DELIVERY_URI="lmtp:$POSTFIX_DELIVERY_HOST:$POSTFIX_DELIVERY_PORT"
 SPAM_URI="scan:[$POSTFIX_SPAM_HOST]:$POSTFIX_SPAM_PORT"
 : ${POSTFIX_RELAY_RECIPIENT_MAPS:=""}
+: ${POSTFIX_RELAYHOST:=""}
 if [[ "$MAILMAN_ENABLE" == "true" ]]; then
 	POSTFIX_RELAY_RECIPIENT_MAPS="$POSTFIX_RELAY_RECIPIENT_MAPS hash:/var/lib/mailman/data/virtual-mailman"
 fi
@@ -41,6 +42,7 @@ fi
 postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	myhostname="$POSTFIX_MYHOSTNAME" \
 	mydestination="$POSTFIX_MYDESTINATION" \
+	relayhost="[$POSTFIX_RELAYHOST]" \
 	mynetworks="$POSTFIX_MYNETWORKS" \
 	virtual_alias_domains="$POSTFIX_VIRTUAL_ALIAS_DOMAINS" \
 	virtual_mailbox_domains="$POSTFIX_VIRTUAL_MAILBOX_DOMAINS" \
