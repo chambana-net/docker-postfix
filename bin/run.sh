@@ -13,6 +13,7 @@ CHECK_VAR POSTFIX_VIRTUAL_ALIAS_DOMAINS
 CHECK_VAR POSTFIX_VIRTUAL_MAILBOX_DOMAINS
 CHECK_VAR POSTFIX_RELAY_DOMAINS
 CHECK_VAR POSTFIX_LDAP_SERVER_HOST
+CHECK_VAR POSTFIX_LDAP_START_TLS
 CHECK_VAR POSTFIX_LDAP_SEARCH_BASE
 CHECK_VAR POSTFIX_LDAP_BIND_DN
 CHECK_VAR POSTFIX_LDAP_BIND_PW
@@ -53,6 +54,7 @@ postconf -Pe smtpd/pass/content_filter="$SPAM_URI"
 MSG "Configuring Postfix LDAP settings..."
 
 sed -i -e "s/^server_host\ *=.*/server_host\ =\ ${POSTFIX_LDAP_SERVER_HOST}/" \
+	-e "s/^start_tls\ *=.*/start_tls\ =\ ${POSTFIX_LDAP_START_TLS}/" \
 	-e "s/^search_base\ *=.*/search_base\ =\ ${POSTFIX_LDAP_SEARCH_BASE}/" \
 	-e "s/^bind_dn\ *=.*/bind_dn\ =\ ${POSTFIX_LDAP_BIND_DN}/" \
 	-e "s/^bind_pw\ *=.*/bind_pw\ =\ ${POSTFIX_LDAP_BIND_PW}/" \

@@ -1,9 +1,9 @@
 server_host = {{ POSTFIX_LDAP_SERVER_HOST }}
-start_tls = yes
+start_tls = {{ POSTFIX_LDAP_START_TLS }}
 tls_require_cert = no
 version = 3
 search_base = {{ POSTFIX_LDAP_SEARCH_BASE }}
-query_filter = (mail=%s)
+query_filter = (uid=%u)
 result_attribute = uid
 bind = yes
 bind_dn = {{ POSTFIX_LDAP_BIND_DN }}
