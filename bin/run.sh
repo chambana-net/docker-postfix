@@ -86,27 +86,6 @@ cp -a /etc/localtime /etc/hosts /etc/services /etc/resolv.conf /etc/nsswitch.con
 #cp -a /usr/lib/x86_64-linux-gnu/libresolv.so* /var/spool/postfix/lib/
 #cp -a /usr/lib/x86_64-linux-gnu/libdb-*.so* /var/spool/postfix/lib/
 
-cat > /etc/supervisor/supervisord.conf << EOF
-[supervisord]
-nodaemon=true
-autostart=true
-autorestart=true
-
-[program:postfix]
-command=/usr/sbin/postfix start
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
-[program:rsyslogd]
-command=/usr/sbin/rsyslogd -n
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-EOF
-
 if [[ "$MAILMAN_ENABLE" == "true" ]]; then
 	CHECK_VAR MAILMAN_DOMAIN
 	CHECK_VAR MAILMAN_DEFAULT_SERVER_LANGUAGE
@@ -139,7 +118,29 @@ if [[ "$MAILMAN_ENABLE" == "true" ]]; then
 		chown -R list:list /var/run/mailman
 	fi
 
-cat >> /etc/supervisor/supervisord.conf << EOF
+cat > /etc/supervisor/supervisord.conf << EOF
+[supervisord]
+nodaemon=true
+autostart=true
+autorestart=true
+
+[program:postfix]
+command=/usr/sbin/postfix start
+process_name=master
+autorestart=false
+startsecs=0
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+[program:rsyslogd]
+command=/usr/sbin/rsyslogd -n
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
 [program:mailman]
 command=/usr/lib/mailman/bin/mailmanctl -s start
 stdout_logfile=/dev/stdout
@@ -149,6 +150,31 @@ stderr_logfile_maxbytes=0
 
 [program:uwsgi]
 command=/usr/bin/uwsgi --ini /etc/uwsgi/mailman.ini
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+EOF
+
+else
+cat > /etc/supervisor/supervisord.conf << EOF
+[supervisord]
+nodaemon=true
+autostart=true
+autorestart=true
+
+[program:postfix]
+command=/usr/sbin/postfix start
+process_name=master
+autorestart=false
+startsecs=0
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+[program:rsyslogd]
+command=/usr/sbin/rsyslogd -n
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr

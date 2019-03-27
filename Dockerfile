@@ -42,8 +42,6 @@ ADD files/uwsgi/mailman.ini /etc/uwsgi/mailman.ini
 
 ADD files/rsyslog/rsyslog.conf /etc/rsyslog.conf
 
-#ADD files/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
-
 EXPOSE 25 80 587
 
 ## Add startup script.
