@@ -28,6 +28,7 @@ ENV POSTFIX_SPAM_PORT 10024
 ENV MAILMAN_DEFAULT_SERVER_LANGUAGE en
 ENV MAILMAN_SPAMASSASSIN_DISCARD_SCORE 8
 ENV MAILMAN_SPAMASSASSIN_HOLD_SCORE 5
+ENV OPENDKIM_ENABLE false
 
 VOLUME ["/var/lib/mailman"]
 
@@ -41,6 +42,8 @@ ADD files/mailman/mm_cfg.py /etc/mailman/mm_cfg.py
 ADD files/uwsgi/mailman.ini /etc/uwsgi/mailman.ini
 
 ADD files/rsyslog/rsyslog.conf /etc/rsyslog.conf
+
+ADD files/opendkim/opendkim.conf /etc/opendkim.conf
 
 EXPOSE 25 80 587
 

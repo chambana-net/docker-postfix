@@ -51,6 +51,14 @@ postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	smtpd_sasl_path="$SASL_URI" \
 	virtual_transport="$DELIVERY_URI"
 
+if [[ "$OPENDKIM_ENABLE" == "true" ]]; then
+	postconf -e milter_default_action=accept \
+		milter_protocol=2 \
+		smtpd_milters=unix:/var/run/opendkim/opendkim.sock \
+		non_smtpd_milters=unix:/var/run/opendkim/opendkim.sock
+fi
+
+
 postconf -Pe smtpd/pass/content_filter="$SPAM_URI"
 
 MSG "Configuring Postfix LDAP settings..."
@@ -88,6 +96,30 @@ cp -a /etc/localtime /etc/hosts /etc/services /etc/resolv.conf /etc/nsswitch.con
 #cp -a /usr/lib/x86_64-linux-gnu/libresolv.so* /var/spool/postfix/lib/
 #cp -a /usr/lib/x86_64-linux-gnu/libdb-*.so* /var/spool/postfix/lib/
 
+cat > /etc/supervisor/supervisord.conf << EOF
+[supervisord]
+nodaemon=true
+autostart=true
+autorestart=true
+
+[program:postfix]
+command=/usr/sbin/postfix start
+process_name=master
+autorestart=false
+startsecs=0
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+
+[program:rsyslogd]
+command=/usr/sbin/rsyslogd -n
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+EOF
+
 if [[ "$MAILMAN_ENABLE" == "true" ]]; then
 	CHECK_VAR MAILMAN_DOMAIN
 	CHECK_VAR MAILMAN_DEFAULT_SERVER_LANGUAGE
@@ -120,29 +152,7 @@ if [[ "$MAILMAN_ENABLE" == "true" ]]; then
 		chown -R list:list /var/run/mailman
 	fi
 
-cat > /etc/supervisor/supervisord.conf << EOF
-[supervisord]
-nodaemon=true
-autostart=true
-autorestart=true
-
-[program:postfix]
-command=/usr/sbin/postfix start
-process_name=master
-autorestart=false
-startsecs=0
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
-[program:rsyslogd]
-command=/usr/sbin/rsyslogd -n
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
+cat >> /etc/supervisor/supervisord.conf << EOF
 [program:mailman]
 command=/usr/lib/mailman/bin/mailmanctl -s start
 stdout_logfile=/dev/stdout
@@ -158,25 +168,12 @@ stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
 EOF
 
-else
-cat > /etc/supervisor/supervisord.conf << EOF
-[supervisord]
-nodaemon=true
-autostart=true
-autorestart=true
+fi
 
-[program:postfix]
-command=/usr/sbin/postfix start
-process_name=master
-autorestart=false
-startsecs=0
-stdout_logfile=/dev/stdout
-stdout_logfile_maxbytes=0
-stderr_logfile=/dev/stderr
-stderr_logfile_maxbytes=0
-
-[program:rsyslogd]
-command=/usr/sbin/rsyslogd -n
+if [[ "$OPENDKIM_ENABLE" == "true" ]]; then
+cat >> /etc/supervisor/supervisord.conf << EOF
+[program:opendkim]
+command=/usr/sbin/opendkim -x /etc/opendkim.conf
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
@@ -184,7 +181,6 @@ stderr_logfile_maxbytes=0
 EOF
 
 fi
-
 
 MSG "Updating CA certificates..."
 if [[ "$(ls -A /usr/local/share/ca-certificates)" ]]; then
