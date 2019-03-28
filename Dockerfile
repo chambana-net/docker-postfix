@@ -43,6 +43,7 @@ ADD files/uwsgi/mailman.ini /etc/uwsgi/mailman.ini
 
 ADD files/rsyslog/rsyslog.conf /etc/rsyslog.conf
 
+RUN gpasswd -a postfix opendkim
 ADD files/opendkim/opendkim.conf /etc/opendkim.conf
 
 EXPOSE 25 80 587

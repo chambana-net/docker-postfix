@@ -52,8 +52,6 @@ postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	virtual_transport="$DELIVERY_URI"
 
 if [[ "$OPENDKIM_ENABLE" == "true" ]]; then
-	chown -R opendkim:opendkim /etc/postfix/dkim
-
 	postconf -e milter_default_action=accept \
 		milter_protocol=2 \
 		smtpd_milters=unix:/var/run/opendkim/opendkim.sock \
