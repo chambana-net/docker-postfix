@@ -153,6 +153,7 @@ if [[ "$MAILMAN_ENABLE" == "true" ]]; then
 	fi
 
 cat >> /etc/supervisor/supervisord.conf << EOF
+
 [program:mailman]
 command=/usr/lib/mailman/bin/mailmanctl -s start
 stdout_logfile=/dev/stdout
@@ -172,8 +173,11 @@ fi
 
 if [[ "$OPENDKIM_ENABLE" == "true" ]]; then
 cat >> /etc/supervisor/supervisord.conf << EOF
+
 [program:opendkim]
 command=/usr/sbin/opendkim -x /etc/opendkim.conf
+autorestart=false
+startsecs=0
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
 stderr_logfile=/dev/stderr
