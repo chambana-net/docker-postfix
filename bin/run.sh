@@ -41,7 +41,6 @@ fi
 postconf -e proxy_interfaces="$POSTFIX_PROXY_INTERFACES" \
 	myhostname="$POSTFIX_MYHOSTNAME" \
 	mydestination="$POSTFIX_MYDESTINATION" \
-	relayhost="[$POSTFIX_RELAYHOST]" \
 	mynetworks="$POSTFIX_MYNETWORKS" \
 	virtual_alias_domains="$POSTFIX_VIRTUAL_ALIAS_DOMAINS" \
 	virtual_mailbox_domains="$POSTFIX_VIRTUAL_MAILBOX_DOMAINS" \
