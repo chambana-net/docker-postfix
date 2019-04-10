@@ -9,7 +9,6 @@ RUN apt-get -qq update && \
                                                mailman \
                                                postfix \
                                                postfix-ldap \
-                                               postfix-policyd-spf-python \
                                                opendkim \
                                                opendkim-tools \
                                                opendmarc \
@@ -48,6 +47,7 @@ ADD files/rsyslog/rsyslog.conf /etc/rsyslog.conf
 RUN gpasswd -a postfix opendkim
 RUN gpasswd -a postfix opendmarc
 ADD files/opendkim/opendkim.conf /etc/opendkim.conf
+ADD files/opendmarc/opendmarc.conf /etc/opendmarc.conf
 
 EXPOSE 25 80 587
 

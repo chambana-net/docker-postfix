@@ -104,8 +104,6 @@ postscreen_dnsbl_sites =
 postscreen_dnsbl_threshold = 3
 postscreen_greet_action = enforce
 	
-spf_time_limit = 3600s
-
 #Error protection
 smtpd_error_sleep_time = 30
 smtpd_soft_error_limit = 10
@@ -138,7 +136,6 @@ smtpd_recipient_restrictions=
         reject_non_fqdn_recipient,
         reject_unknown_sender_domain,
         reject_unknown_recipient_domain,
-        check_policy_service unix:private/spf,
         permit
 
 smtpd_sender_restrictions=
