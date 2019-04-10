@@ -12,6 +12,7 @@ RUN apt-get -qq update && \
                                                postfix-policyd-spf-python \
                                                opendkim \
                                                opendkim-tools \
+                                               opendmarc \
                                                rsyslog \
                                                ca-certificates \
                                                supervisor && \
