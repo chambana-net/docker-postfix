@@ -35,6 +35,8 @@ DELIVERY_URI="lmtp:$POSTFIX_DELIVERY_HOST:$POSTFIX_DELIVERY_PORT"
 SPAM_URI="scan:[$POSTFIX_SPAM_HOST]:$POSTFIX_SPAM_PORT"
 : ${POSTFIX_RELAY_RECIPIENT_MAPS:=""}
 : ${POSTFIX_RELAYHOST:="None"}
+MILTERS=""
+
 if [[ "$MAILMAN_ENABLE" == "true" ]]; then
 	POSTFIX_RELAY_RECIPIENT_MAPS="$POSTFIX_RELAY_RECIPIENT_MAPS hash:/var/lib/mailman/data/virtual-mailman"
 fi
@@ -55,10 +57,18 @@ postconf -e relayhost="[$POSTFIX_RELAYHOST]"
 fi
 	
 if [[ "$OPENDKIM_ENABLE" == "true" ]]; then
+	MILTERS="unix:/var/run/opendkim/opendkim.sock"
+fi
+
+if [[ "$OPENDMARC_ENABLE" == "true" ]]; then
+	MILTERS="$MILTERS unix:/var/run/opendmarc/opendmarc.sock"
+fi
+
+if [[ "$OPENDKIM_ENABLE" == "true" || "$OPENDMARC_ENABLE" == "true" ]]; then
 	postconf -e milter_default_action=accept \
-		milter_protocol=2 \
-		smtpd_milters=unix:/var/run/opendkim/opendkim.sock \
-		non_smtpd_milters=unix:/var/run/opendkim/opendkim.sock
+		milter_protocol=6 \
+		smtpd_milters="$MILTERS" \
+		non_smtpd_milters="$MILTERS"
 fi
 
 
@@ -179,6 +189,21 @@ cat >> /etc/supervisor/supervisord.conf << EOF
 
 [program:opendkim]
 command=/usr/sbin/opendkim -x /etc/opendkim.conf
+autorestart=false
+startsecs=0
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
+EOF
+
+fi
+
+if [[ "$OPENDMARC_ENABLE" == "true" ]]; then
+cat >> /etc/supervisor/supervisord.conf << EOF
+
+[program:opendmarc]
+command=/usr/sbin/opendmarc -c /etc/opendmarc.conf -u opendmarc -p /var/run/opendmarc/opendmarc.sock
 autorestart=false
 startsecs=0
 stdout_logfile=/dev/stdout
