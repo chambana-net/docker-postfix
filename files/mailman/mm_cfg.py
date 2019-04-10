@@ -119,8 +119,8 @@ DEFAULT_MAX_MESSAGE_SIZE = 512           # KB
 DEFAULT_ARCHIVE_PRIVATE = 1
 DEFAULT_REQUIRE_EXPLICIT_DESTINATION = No
 DEFAULT_SUBSCRIBE_POLICY = 3
-# DMARC Workaround for v2.1.16
-ALLOW_FROM_IS_LIST = Yes
+# DMARC Workaround for v2.1.18
+DEFAULT_DMARC_MODERATION_ACTION = 1
 
 # Note - if you're looking for something that is imported from mm_cfg, but you
 # didn't find it above, it's probably in /usr/lib/mailman/Mailman/Defaults.py.
