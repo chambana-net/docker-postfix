@@ -203,7 +203,7 @@ if [[ "$OPENDMARC_ENABLE" == "true" ]]; then
 cat >> /etc/supervisor/supervisord.conf << EOF
 
 [program:opendmarc]
-command=/usr/sbin/opendmarc -c /etc/opendmarc.conf -u opendmarc -p /var/run/opendmarc/opendmarc.sock
+command=/usr/sbin/opendmarc -c /etc/opendmarc.conf -u postfix -p /var/run/opendmarc/opendmarc.sock
 autorestart=false
 startsecs=0
 stdout_logfile=/dev/stdout
