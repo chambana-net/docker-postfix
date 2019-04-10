@@ -11,6 +11,7 @@ RUN apt-get -qq update && \
                                                postfix-ldap \
                                                opendkim \
                                                opendkim-tools \
+                                               unbound \
                                                opendmarc \
                                                rsyslog \
                                                ca-certificates \
