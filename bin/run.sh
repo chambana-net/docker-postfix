@@ -35,6 +35,7 @@ DELIVERY_URI="lmtp:$POSTFIX_DELIVERY_HOST:$POSTFIX_DELIVERY_PORT"
 SPAM_URI="scan:[$POSTFIX_SPAM_HOST]:$POSTFIX_SPAM_PORT"
 : ${POSTFIX_RELAY_RECIPIENT_MAPS:=""}
 : ${POSTFIX_RELAYHOST:="None"}
+: ${OPENDKIM_NAMESERVERS:="9.9.9.9,1.1.1.1"}
 MILTERS=""
 
 if [[ "$MAILMAN_ENABLE" == "true" ]]; then
@@ -58,6 +59,8 @@ fi
 	
 if [[ "$OPENDKIM_ENABLE" == "true" ]]; then
 	MILTERS="unix:/var/run/opendkim/opendkim.sock"
+	sed -i -e "s/^Nameservers\ .*/Nameservers\ ${OPENDKIM_NAMESERVERS}/" \
+		/etc/opendkim.conf
 fi
 
 if [[ "$OPENDMARC_ENABLE" == "true" ]]; then
