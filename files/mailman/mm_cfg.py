@@ -121,6 +121,7 @@ DEFAULT_REQUIRE_EXPLICIT_DESTINATION = No
 DEFAULT_SUBSCRIBE_POLICY = 3
 # DMARC Workaround for v2.1.18
 DEFAULT_DMARC_MODERATION_ACTION = 1
+REMOVE_DKIM_HEADERS = Yes
 
 # Note - if you're looking for something that is imported from mm_cfg, but you
 # didn't find it above, it's probably in /usr/lib/mailman/Mailman/Defaults.py.
