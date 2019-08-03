@@ -12,6 +12,8 @@ RUN apt-get -qq update && \
                                                opendkim \
                                                opendkim-tools \
                                                opendmarc \
+                                               unbound \
+                                               unbound-anchor \
                                                rsyslog \
                                                ca-certificates \
                                                supervisor && \
