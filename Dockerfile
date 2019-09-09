@@ -16,6 +16,7 @@ RUN apt-get -qq update && \
                                                unbound-anchor \
                                                rsyslog \
                                                ca-certificates \
+                                               spamassassin \
                                                supervisor && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
